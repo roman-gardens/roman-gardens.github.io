@@ -1,12 +1,18 @@
-// highlight when running on test site
+// highlight when running on localhost or test site
 window.onload = (e) => {
-    let re = new RegExp(`^/(test-\\w+)/`)
-    let m = location.pathname.match(re)
-    if (m) {
-        document.querySelector('body').classList.add(m[1])
+    let server
+    if (location.hostname == 'localhost') {
+        server = 'localhost'
+    }
+    let m = location.pathname.match(`^/(test-\\w+)/`)
+    if (m)  {
+        server = m[1]
+    }
+    if (server) {
+        document.querySelector('body').classList.add(server)
         let div = document.createElement('div')
         div.classList.add('test-header')
-        div.innerText = m[1]
+        div.innerText = server
         document.querySelector('body').prepend(div)
     }
 }
@@ -20,7 +26,19 @@ function fullscreen(img) {
     d.style.backgroundImage = `url(${img.src})`
     d.style.display = 'block'
     document.querySelector('body').append(d)
-    d.addEventListener('click', (x) => { 
+    d.addEventListener('click', (x) => {
         d.remove()
     })
+}
+
+async function citeThis(e) {
+    try {
+        const citation = document.querySelector('cite').innerText
+        const clip = new ClipboardItem({ ["text/plain"]: citation })
+        await navigator.clipboard.write([clip])
+        alert("This citation has been copied to your clipboard:\n\n" + citation)
+    }
+    catch (error) {
+        console.log(error)
+    }
 }
